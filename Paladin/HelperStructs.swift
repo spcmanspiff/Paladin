@@ -7,77 +7,81 @@
 //
 
 import SwiftUI
-
-// MARK: - Classes
-struct Classes : Codable {
-    let count: Int
-    let results: [Result]
-}
-
-struct ClassNames: Identifiable {
-    let name: String
-    let id = UUID()
-    let side: String
-}
-
-struct Spells : Codable {
-    let count: Int
-    let results: [Result]
-}
-struct Monsters : Codable {
-    let count: Int
-    let results: [Result]
-}
-
-struct Races : Codable {
-    let count: Int
-    let results: [Result]
-}
-
-// MARK: - Result
-struct Result : Codable, Hashable {
-    
-    let index, name, url: String
-    let id = UUID()
-    
-    var iconName: String  {
-        SpellDetails.CodingKeys.name.stringValue
-    }
-
-}
-
-struct School: Codable {
-    let name, url: String
-}
+import Foundation
 
 
+// MARK: - Spell
+struct Spell: Codable {
+    let slug, name, desc, higherLevel: String
+    let page, range: String
+    let components: Components
+    let material: String
+    let ritual: Concentration
+    let duration: String
+    let concentration: Concentration
+    let castingTime: String
+    let level: Level
+    let levelInt: Int
+    let schools: Schools
+    let dndClass, archetype, circles: String
+    let documentSlug: DocumentSlug
+    let documentTitle: DocumentTitle
+    let documentLicenseURL: String
 
-struct SpellDetails: Codable {
-    let index, name: String
-    let desc, higherLevel: [String]?
-    let range: String
-    let components: [String]?
-    let material: String?
-    let ritual: Bool?
-    let duration: String?
-    let concentration: Bool?
-    let castingTime: String?
-    let level: Int?
-    let school: School?
-    let classes, subclasses: [School]?
-    let url: String?
-    
-  
-    
     enum CodingKeys: String, CodingKey {
-       
-        case index, name, desc
+        case slug, name, desc
         case higherLevel = "higher_level"
-        case range, components, material, ritual, duration, concentration
+        case page, range, components, material, ritual, duration, concentration
         case castingTime = "casting_time"
-        case level, school, classes, subclasses, url
+        case level
+        case levelInt = "level_int"
+        case schools
+        case dndClass = "dnd_class"
+        case archetype, circles
+        case documentSlug = "document__slug"
+        case documentTitle = "document__title"
+        case documentLicenseURL = "document__license_url"
     }
 }
+
+enum Components: String, Codable {
+    case s = "S"
+    case v = "V"
+    case vS = "V, S"
+    case vSM = "V, S, M"
+}
+
+enum Concentration: String, Codable {
+    case no = "no"
+    case yes = "yes"
+}
+
+enum DocumentSlug: String, Codable {
+    case wotcSrd = "wotc-srd"
+}
+
+enum DocumentTitle: String, Codable {
+    case systemsReferenceDocument = "Systems Reference Document"
+}
+
+enum Level: String, Codable {
+    case the1StLevel = "1st-level"
+    case the2NdLevel = "2nd-level"
+    case the3RDLevel = "3rd-level"
+    case the4ThLevel = "4th-level"
+    case the5ThLevel = "5th-level"
+}
+
+enum Schools: String, Codable {
+    case abjuration = "Abjuration"
+    case conjuration = "Conjuration"
+    case divination = "Divination"
+    case enchantment = "Enchantment"
+    case evocation = "Evocation"
+    case necromancy = "Necromancy"
+    case transmutation = "Transmutation"
+}
+
 
 class TappedSpell : ObservableObject {
     @Published var tappedSpell = "acid-arrow"
@@ -120,48 +124,25 @@ var placeholder: String
     }
 }
 
-// MARK: - ClassDetailInfo
-struct ClassDetailInfo: Codable {
-    let id, index, name: String
-    let hitDie: Int
-    let proficiencyChoices: [ProficiencyChoice]
-    let proficiencies, savingThrows: [Proficiency]
-    let startingEquipment, classLevels: ClassLevels
-    let subclasses: [Proficiency]
-    let url: String
-    
-    enum CodingKeys: String, CodingKey {
-        case id = "_id"
-        case index, name
-        case hitDie = "hit_die"
-        case proficiencyChoices = "proficiency_choices"
-        case proficiencies
-        case savingThrows = "saving_throws"
-        case startingEquipment = "starting_equipment"
-        case classLevels = "class_levels"
-        case subclasses, url
-    }
+// MARK: - SpellDetails
+struct SpellDetails : Codable {
+    let index, name: String
+    let desc, higherLevel: [String]?
+    let range: String?
+    let components: [String]?
+    let material: String?
+    let ritual: Bool?
+    let duration: String?
+    let concentration: Bool?
+    let castingTime: String?
+    let level: Int?
+    let healAtSlotLevel: [String: String]?
+    let school: School?
+    let classes, subclasses: [School]?
+    let url: String?
 }
 
-// MARK: - ClassLevels
-struct ClassLevels: Codable {
-    let url, classLevelsClass: String
-    
-    enum CodingKeys: String, CodingKey {
-        case url
-        case classLevelsClass = "class"
-    }
-}
-
-// MARK: - Proficiency
-struct Proficiency: Codable {
-    let name, url: String
-}
-
-// MARK: - ProficiencyChoice
-struct ProficiencyChoice: Codable, Identifiable {
-    let id = UUID()
-    let choose: Int
-    let type: String
-    let from: [Proficiency]
+// MARK: - School
+struct School : Codable {
+    let index, name, url: String
 }
